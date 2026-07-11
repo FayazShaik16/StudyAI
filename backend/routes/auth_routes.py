@@ -20,6 +20,8 @@ def signup():
         return success_response({"token": token, "user": user})
     except ValueError as e:
         return error_response('BAD_REQUEST', str(e))
+    except Exception as e:
+        return error_response('SERVER_ERROR', f"Signup failed: {str(e)}", 500)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -35,6 +37,8 @@ def login():
         return success_response({"token": token, "user": user})
     except ValueError as e:
         return error_response('UNAUTHORIZED', str(e), 401)
+    except Exception as e:
+        return error_response('SERVER_ERROR', f"Login failed: {str(e)}", 500)
 
 @auth_bp.route('/logout', methods=['POST'])
 @require_auth

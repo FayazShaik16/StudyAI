@@ -487,6 +487,30 @@ class DBService:
                 return task
             return None
 
+    def update_study_task(self, task_id, user_id, update_data):
+        if firestore_db:
+            doc_ref = firestore_db.collection('study_tasks').document(task_id)
+            snapshot = doc_ref.get()
+            if snapshot.exists:
+                task = snapshot.to_dict()
+                if task.get('userId') == user_id:
+                    allowed = {'title', 'description', 'dueDate', 'estimatedMinutes', 'type', 'priority', 'status'}
+                    filtered = {k: v for k, v in update_data.items() if k in allowed}
+                    task.update(filtered)
+                    doc_ref.set(task)
+                    return task
+            return None
+        else:
+            tasks = self._read_study_tasks()
+            task = tasks.get(task_id)
+            if task and task.get('userId') == user_id:
+                allowed = {'title', 'description', 'dueDate', 'estimatedMinutes', 'type', 'priority', 'status'}
+                filtered = {k: v for k, v in update_data.items() if k in allowed}
+                task.update(filtered)
+                self._write_study_tasks(tasks)
+                return task
+            return None
+
     # APPOINTMENTS
     def get_appointments(self, user_id):
         if firestore_db:
