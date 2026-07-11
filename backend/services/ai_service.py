@@ -11,15 +11,18 @@ load_dotenv()
 
 class AIService:
     def __init__(self):
-        self.api_key = os.environ.get('GROQ_API_KEY')
+        api_key_str = os.environ.get('GROQ_API_KEY', '')
+        self.api_keys = [k.strip() for k in api_key_str.split(',') if k.strip()]
+        self.current_key_index = 0
+        
         self.model = os.environ.get('GROQ_MODEL', 'llama-3.3-70b-versatile')
         self.max_retries = int(os.environ.get('AI_MAX_RETRIES', '2'))
         
-        if not self.api_key:
+        if not self.api_keys:
             print("WARNING: GROQ_API_KEY is not set.")
             self.client = None
         else:
-            self.client = Groq(api_key=self.api_key)
+            self.client = Groq(api_key=self.api_keys[self.current_key_index])
 
     def generate_completion(self, system_prompt, user_prompt, max_tokens=2048, temperature=0.7):
         if not self.client:
@@ -50,7 +53,15 @@ class AIService:
                 
             except Exception as e:
                 error_msg = str(e)
-                if "Rate limit" in error_msg or type(e).__name__ == 'RateLimitError':
+                is_rate_limit = "Rate limit" in error_msg or type(e).__name__ == 'RateLimitError'
+                
+                if is_rate_limit:
+                    if self.current_key_index < len(self.api_keys) - 1:
+                        print(f"Key {self.current_key_index} rate limited. Rotating to key {self.current_key_index + 1}...")
+                        self.current_key_index += 1
+                        self.client = Groq(api_key=self.api_keys[self.current_key_index])
+                        continue
+                        
                     wait_time = "a few minutes"
                     match = re.search(r"Please try again in ([0-9a-zA-Z\.]+)", error_msg)
                     if match:
