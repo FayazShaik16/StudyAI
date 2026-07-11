@@ -321,7 +321,7 @@ export default function UploadPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                      {material.type === 'text/plain' ? (
+                      {material.fileType === 'text/plain' ? (
                         <Type className="h-6 w-6 text-primary" />
                       ) : (
                         <FileIcon className="h-6 w-6 text-primary" />

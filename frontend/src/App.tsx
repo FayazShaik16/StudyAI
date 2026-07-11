@@ -8,7 +8,7 @@ import MainLayout from "@/components/layouts/MainLayout"
 import DashboardLayout from "@/components/layouts/DashboardLayout"
 
 // Lazy loaded pages for performance
-const LandingPage = lazy(() => import("@/pages/Landing"))
+
 const LoginPage = lazy(() => import("@/pages/Login"))
 const SignupPage = lazy(() => import("@/pages/Signup"))
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword"))

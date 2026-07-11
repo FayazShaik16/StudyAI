@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/AuthContext"
-import { User, Mail, LogOut, Bell, Shield, Moon, Monitor, UploadCloud } from "lucide-react"
+import { User, Mail, LogOut, Monitor, UploadCloud } from "lucide-react"
 
 export default function SettingsPage() {
   const { user, logout } = useAuth()
