@@ -8,7 +8,9 @@ from services.materials_service import materials_service
 from services.db_service import db_service
 
 class QuizService:
-    def generate_quiz(self, material_id, user_id, force_regenerate=False):
+    def generate_quiz(self, material_id, user_id, force_regenerate=False, types=None):
+        if types is None:
+            types = ['Multiple Choice', 'True/False', 'Short Answer']
         existing_quiz = db_service.get_quiz_by_material(material_id)
         if existing_quiz and not force_regenerate:
             return existing_quiz
@@ -28,7 +30,7 @@ class QuizService:
             
         main_chunk = chunks[0] 
 
-        system_prompt = prompt_service.get_quiz_system_prompt()
+        system_prompt = prompt_service.get_quiz_system_prompt(types)
         user_prompt = prompt_service.get_quiz_user_prompt(main_chunk)
         
         json_output = ai_service.generate_completion(system_prompt, user_prompt)

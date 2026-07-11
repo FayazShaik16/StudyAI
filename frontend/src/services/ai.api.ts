@@ -61,9 +61,9 @@ export const updateFlashcardProgress = async (deckId: string, cardId: string, st
   }
 }
 
-export const generateQuiz = async (materialId: string, force: boolean = false): Promise<FirestoreResponse<any>> => {
+export const generateQuiz = async (materialId: string, force: boolean = false, types: string[] = ['Multiple Choice', 'True/False', 'Short Answer']): Promise<FirestoreResponse<any>> => {
   try {
-    const res = await api.post(`/ai/quiz/generate/${materialId}?force=${force}`)
+    const res = await api.post(`/ai/quiz/generate/${materialId}?force=${force}`, { types })
     return { data: res.data.quiz, success: true, error: null }
   } catch (err: any) {
     return { data: null, success: false, error: err.response?.data?.error || err.message }

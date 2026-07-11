@@ -83,7 +83,9 @@ def update_flashcard_progress(deck_id, card_id):
 def generate_quiz(material_id):
     try:
         force = request.args.get('force', 'false').lower() == 'true'
-        quiz = quiz_service.generate_quiz(material_id, g.user['uid'], force_regenerate=force)
+        data = request.get_json(silent=True) or {}
+        types = data.get('types', ['Multiple Choice', 'True/False', 'Short Answer'])
+        quiz = quiz_service.generate_quiz(material_id, g.user['uid'], force_regenerate=force, types=types)
         return success_response({"quiz": quiz})
     except ValueError as e:
         return error_response('BAD_REQUEST', str(e), 400)

@@ -15,6 +15,7 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState("")
+  const [questionTypes, setQuestionTypes] = useState<string[]>(['Multiple Choice', 'True/False', 'Short Answer'])
 
   // General routes fallback state
   const [materialsList, setMaterialsList] = useState<Material[]>([])
@@ -134,8 +135,12 @@ export default function QuizPage() {
   const handleGenerate = async (force = false) => {
     const activeId = id || selectedMatId
     if (!activeId) return
+    if (questionTypes.length === 0) {
+      alert("Please select at least one question type.")
+      return
+    }
     setGenerating(true)
-    const res = await generateQuiz(activeId, force)
+    const res = await generateQuiz(activeId, force, questionTypes)
     if (res.success && res.data) {
       setQuiz(res.data)
       setAnswers({})
@@ -611,7 +616,28 @@ export default function QuizPage() {
         <div className="flex flex-col items-center justify-center p-24 border rounded-xl bg-card shadow-sm text-center">
           <Target className="h-16 w-16 text-primary mb-6 opacity-80" />
           <h3 className="text-2xl font-bold mb-3">Test Your Knowledge</h3>
-          <p className="text-muted-foreground max-w-md mb-8">Generate an intelligent, mixed-mode quiz tailored specifically to this document.</p>
+          <p className="text-muted-foreground max-w-md mb-6">Generate an intelligent, mixed-mode quiz tailored specifically to this document.</p>
+          
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+            {['Multiple Choice', 'True/False', 'Short Answer'].map(type => (
+              <label key={type} className={`flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-medium cursor-pointer transition-colors ${questionTypes.includes(type) ? 'bg-primary/10 border-primary/50 text-primary' : 'hover:bg-accent text-muted-foreground'}`}>
+                <input 
+                  type="checkbox" 
+                  checked={questionTypes.includes(type)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setQuestionTypes(prev => [...prev, type])
+                    } else {
+                      setQuestionTypes(prev => prev.filter(t => t !== type))
+                    }
+                  }}
+                  className="accent-primary"
+                />
+                {type}
+              </label>
+            ))}
+          </div>
+
           <button 
             onClick={() => handleGenerate(false)}
             className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full text-base font-medium hover:bg-primary/90 transition-colors shadow-md"

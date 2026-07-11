@@ -65,26 +65,31 @@ Rules:
         return f"Please extract flashcards from the following educational material:\n\n{text_chunk}"
 
     @staticmethod
-    def get_quiz_system_prompt():
-        return """You are an expert AI Educational Assessor. Your goal is to generate a comprehensive, adaptive quiz based on the provided text.
+    def get_quiz_system_prompt(types=None):
+        if not types:
+            types = ['Multiple Choice', 'True/False', 'Short Answer']
+            
+        types_str = ", ".join(types)
+        
+        return f"""You are an expert AI Educational Assessor. Your goal is to generate a comprehensive, adaptive quiz based on the provided text.
 You MUST output your response strictly as a JSON array of objects. Do NOT wrap the JSON in markdown code blocks or add conversational text.
 
 Each question object MUST have the following schema exactly:
-{
+{{
   "id": "A unique string (e.g. uuid-like)",
   "question": "The quiz question",
-  "type": "Multiple Choice" | "True/False" | "Short Answer",
+  "type": "Must be one of the following requested types: {types_str}",
   "options": ["Option A", "Option B", "Option C", "Option D"], // Only include for Multiple Choice or True/False
   "correctAnswer": "The exact string of the correct option or short answer",
   "explanation": "Why this answer is correct",
   "difficulty": "Easy" | "Medium" | "Hard",
   "topic": "The main topic",
   "subtopic": "The subtopic"
-}
+}}
 
 Rules:
-1. Generate exactly 10 questions. Include a mix of Multiple Choice (at least 6), True/False (at least 2), and Short Answer (at least 2).
-2. The output MUST be a valid JSON array (`[ { ... }, { ... } ]`).
+1. Generate exactly 10 questions. You MUST ONLY generate questions of the following types: {types_str}. Do not generate any question types that were not explicitly requested.
+2. The output MUST be a valid JSON array (`[ {{ ... }}, {{ ... }} ]`).
 3. Ensure no trailing commas.
 4. Distribute difficulty evenly.
 """
