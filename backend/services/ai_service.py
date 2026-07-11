@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from groq import Groq
 from utils.response import error_response
 
+import re
+
 # Force load environment variables before class initialization
 load_dotenv()
 
@@ -47,8 +49,16 @@ class AIService:
                 return content
                 
             except Exception as e:
+                error_msg = str(e)
+                if "Rate limit" in error_msg or type(e).__name__ == 'RateLimitError':
+                    wait_time = "a few minutes"
+                    match = re.search(r"Please try again in ([0-9a-zA-Z\.]+)", error_msg)
+                    if match:
+                        wait_time = match.group(1)
+                    raise RuntimeError(f"Internal error: AI service is currently at capacity. Please try again in {wait_time}.")
+                
                 retries += 1
                 if retries > self.max_retries:
-                    raise RuntimeError(f"AI Generation failed after {self.max_retries} retries: {str(e)}")
+                    raise RuntimeError(f"Internal error: AI Generation failed.")
 
 ai_service = AIService()
