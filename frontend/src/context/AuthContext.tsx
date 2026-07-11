@@ -25,13 +25,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = sessionStorage.getItem("token")
+      const token = localStorage.getItem("token")
       if (token) {
         try {
           const res = await api.get("/auth/me")
           setUser(res.data.user)
         } catch (error) {
-          sessionStorage.removeItem("token")
+          localStorage.removeItem("token")
         }
       }
       setLoading(false)
@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [])
 
   const login = (token: string, user: User) => {
-    sessionStorage.setItem("token", token)
+    localStorage.setItem("token", token)
     setUser(user)
   }
 
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
         await api.post("/auth/logout")
     } catch (e) {}
-    sessionStorage.removeItem("token")
+    localStorage.removeItem("token")
     setUser(null)
   }
 
