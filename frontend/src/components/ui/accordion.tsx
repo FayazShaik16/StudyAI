@@ -1,0 +1,1 @@
+import * as React from 'react'; import { cn } from '@/utils/utils'; export const Accordion = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => ( <div ref={ref} className={cn('', className)} {...props} /> )); Accordion.displayName = 'Accordion';
