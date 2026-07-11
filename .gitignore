@@ -39,3 +39,5 @@ venv/
 
 # Backend Data (exclude local DB files to avoid overwriting or exposing data)
 backend/data/*.json
+
+backend/data/uploads/*
