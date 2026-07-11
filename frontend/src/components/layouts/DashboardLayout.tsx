@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
-import { LayoutDashboard, UploadCloud, LogOut, Settings, Home, FileText, Brain, HelpCircle, CalendarDays, Menu, X } from "lucide-react"
+import { LayoutDashboard, UploadCloud, LogOut, Settings, Home, FileText, Brain, HelpCircle, CalendarDays, Menu, X, Library } from "lucide-react"
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth()
@@ -11,6 +11,7 @@ export default function DashboardLayout() {
   const navItems = [
     { name: "Home", path: "/app", icon: Home },
     { name: "Dashboard", path: "/app/dashboard", icon: LayoutDashboard },
+    { name: "Library", path: "/app/materials", icon: Library },
     { name: "Upload", path: "/app/upload", icon: UploadCloud },
     { name: "Summary", path: "/app/summary", icon: FileText },
     { name: "Flashcards", path: "/app/flashcards", icon: Brain },
